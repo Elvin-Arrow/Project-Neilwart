@@ -77,14 +77,61 @@ python main.py document.pdf --output-dir ./extracted_notes --output-file special
 ```
 
 ### Usage with Docker
-To process files via Docker, you must mount a local directory containing your documents to the container using `-v`.
-```bash
-# General Docker Run (Output directory is mapped to the current host directory)
-docker run --rm -v $(pwd):/data voidwalker07/jesinia /data/your_document.pdf --output-dir /data/output
 
-# Using OpenAI or Gemini (Passing ENV vars)
+Using Docker requires mounting a local directory into the container so the app can read your files and write the generated notes. We recommend mounting your current directory (`$(pwd)`) to `/data` inside the container.
+
+#### 1. Basic Note Generation
+Generate notes for a single file using the default (Ollama) provider and the map-reduce strategy.
+```bash
+docker run --rm -v $(pwd):/data voidwalker07/jesinia /data/your_document.pdf
+```
+*Note: The generated notes will appear in your current directory as `your_document_notes.md`.*
+
+#### 2. Processing Multiple Files
+Pass as many files as you want; the tool will process them one by one.
+```bash
+docker run --rm -v $(pwd):/data voidwalker07/jesinia \
+  /data/resume.pdf \
+  /data/annual_report.docx \
+  /data/presentation.pptx
+```
+
+#### 3. Specifying output locations
+Save notes to a specific folder or overwrite the default filename.
+```bash
+docker run --rm -v $(pwd):/data voidwalker07/jesinia /data/document.pdf \
+  --output-dir /data/extracted_notes \
+  --output-file custom_notes.md
+```
+
+#### 4. Changing the AI Strategy
+Use the feed-forward strategy instead of map-reduce to merge information sequentially.
+```bash
+docker run --rm -v $(pwd):/data voidwalker07/jesinia /data/document.pdf \
+  --strategy feed-forward
+```
+
+#### 5. Using OpenAI or Gemini
+To use managed services, you must pass your API keys into the container using the `-e` flag.
+```bash
+# Using OpenAI
 docker run --rm -e OPENAI_API_KEY="$OPENAI_API_KEY" -v $(pwd):/data voidwalker07/jesinia /data/your_document.pdf --provider openai
 
-# Using Local Ollama (Mac/Windows Docker Networking to Host)
+# Using Google Gemini
+docker run --rm -e GEMINI_API_KEY="$GEMINI_API_KEY" -v $(pwd):/data voidwalker07/jesinia /data/your_document.pdf --provider gemini
+```
+
+#### 6. Connecting to a Local Ollama (Host Machine)
+If you are running Ollama directly on your host machine (not in another container), the Docker container needs special network configuration to reach it.
+
+**For Mac/Windows (Docker Desktop):**
+Use `host.docker.internal` to point the container to your machine.
+```bash
 docker run --rm -e OLLAMA_HOST="http://host.docker.internal:11434" -v $(pwd):/data voidwalker07/jesinia /data/your_document.pdf --provider ollama
+```
+
+**For Linux:**
+Use the `--net=host` flag.
+```bash
+docker run --rm --net=host -v $(pwd):/data voidwalker07/jesinia /data/your_document.pdf --provider ollama
 ```
