@@ -1,6 +1,6 @@
-# AI Note Generation CLI
+# Jesinia
 
-A powerful, generalized CLI application that accepts presentations, Word documents, PDFs, and Markdown files, and uses AI to distill them into structured Markdown notes.
+A generalized CLI application that accepts presentations, Word documents, PDFs, and Markdown files, and uses AI to distill them into structured Markdown notes.
 
 It's designed with a plug-and-play architecture that supports multiple AI providers (Ollama, OpenAI, Gemini) and features advanced generation strategies (like Map-Reduce) for handling long-context documents efficiently.
 
