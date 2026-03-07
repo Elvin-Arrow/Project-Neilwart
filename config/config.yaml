@@ -1,0 +1,62 @@
+# Default AI Provider (ollama, openai, gemini)
+# Overridden by the --provider CLI flag
+provider: "ollama"
+
+model:
+  ollama:
+    name: "gemma3"
+    max_retries: 3
+    base_delay: 2
+  openai:
+    name: "gpt-4o"
+    max_retries: 3
+    base_delay: 2
+  gemini:
+    name: "gemini-2.5-flash"
+    max_retries: 3
+    base_delay: 2
+
+app:
+  reduce_chunk_size: 5
+
+prompts:
+  generate_notes_map: >
+    Extract key information and generate detailed, well-structured notes from the following content.
+    Use markdown formatting with headings, bullet points, and bold text for emphasis.
+    Ensure no critical information is missed.
+    CRITICAL INSTRUCTION: Output ONLY valid Markdown. Do not include any conversational filler, greetings, preambles (e.g., 'Here are the notes:'), concluding remarks, or offers for further assistance. Do not ask any questions. Do not wrap the output in markdown code blocks (```).
+    
+  generate_notes_feed_forward_new: >
+    Extract key information and generate detailed, well-structured notes from the following content.
+    Use markdown formatting with headings, bullet points, and bold text for emphasis.
+    Ensure no critical information is missed.
+    CRITICAL INSTRUCTION: Output ONLY valid Markdown. Do not include any conversational filler, greetings, preambles, concluding remarks, or offers for further assistance. Do not ask any questions. Do not wrap the output in markdown code blocks (```).
+    
+  generate_notes_feed_forward_merge: >
+    You are a note-taking assistant. I will provide you with a new section of an ongoing document,
+    as well as the detailed notes you have generated so far from previous sections.
+    Your task is to integrate the key information from this *new* content into the *existing* notes.
+    Do not discard any important information from the previous notes. Weave the new details into
+    the existing structure where appropriate, or add new sections if needed.
+    CRITICAL INSTRUCTION: Output ONLY valid Markdown. Do not include any conversational filler, greetings, preambles, concluding remarks, or offers for further assistance. Do not ask any questions. Do not wrap the output in markdown code blocks (```).
+
+  synthesize_notes: >
+    You are an expert synthesizer. I will provide you with several sections of notes
+    generated from parts of a larger document. Your task is to combine, organize,
+    and synthesize these notes into a single cohesive, well-structured summary.
+    Remove redundancies and ensure a logical flow. Use markdown formatting with clear headings.
+    CRITICAL INSTRUCTION: Output ONLY valid Markdown. Do not include any conversational filler, greetings, preambles, concluding remarks, or offers for further assistance. Do not ask any questions. Do not wrap the output in markdown code blocks (```).
+
+  verify_notes: >
+    Here is the [Full Source Document] and here are the [Generated Notes].
+    Identify any points in the notes that are NOT supported by the source document and remove them.
+    Return the final, verified notes in Markdown format. Respond ONLY with the verified notes,
+    do not include conversational filler.
+
+  divide_markdown: >
+    You are a helpful assistant. I am going to provide you with a markdown document.
+    Your task is to divide this document into neat, logical sections by inserting the standard
+    markdown thematic break (---) between them.
+    CRITICAL INSTRUCTION: You MUST NOT change, add, or remove any of the actual words or content.
+    Your ONLY job is to insert '---' on a new line where a new section logically begins
+    (e.g., before major headers or shifts in topic). Respond ONLY with the modified markdown text.

@@ -1,0 +1,6 @@
+ollama
+PyMuPDF
+python-docx
+python-pptx
+Pillow
+PyYAML
