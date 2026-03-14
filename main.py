@@ -111,8 +111,10 @@ def process_file(filepath, provider, strategy="map-reduce", output_dir=None, out
 
 def main():
     parser = argparse.ArgumentParser(description=f"Generate notes from PDF, Word, or PowerPoint files using AI Providers.")
-    parser.add_argument("files", nargs='+', help="Paths to one or more files to process")
-    parser.add_argument("--strategy", choices=["map-reduce", "feed-forward"], default="map-reduce", 
+    parser.add_argument("file", help="Path to the file to process")
+    parser.add_argument("--transcript", type=str, default=None, 
+                        help="Path to an optional transcript file (currently unused).")
+    parser.add_argument("--strategy", choices=["map-reduce", "feed-forward"], default="map-reduce",  
                         help="Note generation strategy to use (default: map-reduce).")
     parser.add_argument("--provider", choices=["ollama", "openai", "gemini"], default=config.get("provider", "ollama"),
                         help="The AI provider to use. Defaults to what is in config.yaml.")
@@ -130,14 +132,13 @@ def main():
         print(f"Error initializing provider: {e}")
         sys.exit(1)
 
-    for filepath in args.files:
-        process_file(
-            filepath, 
-            provider, 
-            strategy=args.strategy, 
-            output_dir=args.output_dir, 
-            output_file=args.output_file
-        )
+    process_file(
+        args.file, 
+        provider, 
+        strategy=args.strategy, 
+        output_dir=args.output_dir, 
+        output_file=args.output_file
+    )
 
 if __name__ == "__main__":
     main()
