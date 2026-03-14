@@ -55,9 +55,17 @@ You can tweak the exact LLM prompt instructions, models for each provider (e.g. 
 ### Basic CLI usage
 By default, the application runs the `map-reduce` strategy using the `ollama` provider and outputs everything to `{filename}_notes.md`.
 
+*Note: The current version of the application only accepts a single file as input. Support for batch processing multiple files is planned for a future release.*
+
 ```bash
 python main.py slide_deck.pptx
-python main.py resume.pdf annual_report.docx
+python main.py resume.pdf
+```
+
+### Passing a Transcript
+You can also provide a transcript file alongside the main document using the `--transcript` flag (currently unused, but supported by the CLI for future extension):
+```bash
+python main.py presentation.pptx --transcript lecture_audio.txt
 ```
 
 ### Specifying a Strategy
@@ -87,16 +95,7 @@ docker run --rm -v $(pwd):/data voidwalker07/jesinia /data/your_document.pdf
 ```
 *Note: The generated notes will appear in your current directory as `your_document_notes.md`.*
 
-#### 2. Processing Multiple Files
-Pass as many files as you want; the tool will process them one by one.
-```bash
-docker run --rm -v $(pwd):/data voidwalker07/jesinia \
-  /data/resume.pdf \
-  /data/annual_report.docx \
-  /data/presentation.pptx
-```
-
-#### 3. Specifying output locations
+#### 2. Specifying output locations
 Save notes to a specific folder or overwrite the default filename.
 ```bash
 docker run --rm -v $(pwd):/data voidwalker07/jesinia /data/document.pdf \
@@ -104,14 +103,14 @@ docker run --rm -v $(pwd):/data voidwalker07/jesinia /data/document.pdf \
   --output-file custom_notes.md
 ```
 
-#### 4. Changing the AI Strategy
+#### 3. Changing the AI Strategy
 Use the feed-forward strategy instead of map-reduce to merge information sequentially.
 ```bash
 docker run --rm -v $(pwd):/data voidwalker07/jesinia /data/document.pdf \
   --strategy feed-forward
 ```
 
-#### 5. Using OpenAI or Gemini
+#### 4. Using OpenAI or Gemini
 To use managed services, you must pass your API keys into the container using the `-e` flag.
 ```bash
 # Using OpenAI
@@ -136,7 +135,7 @@ Use the `--net=host` flag.
 docker run --rm --net=host -v $(pwd):/data voidwalker07/jesinia /data/your_document.pdf --provider ollama
 ```
 
-#### 7. Hardware Acceleration (NVIDIA GPUs)
+#### 6. Hardware Acceleration (NVIDIA GPUs)
 If you have an NVIDIA GPU, you can pass the `--gpus all` flag to the container to speed up local extraction workloads (note: this requires installing the [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) on your host machine).
 ```bash
 docker run --rm --gpus all -v $(pwd):/data voidwalker07/jesinia /data/your_document.pdf
